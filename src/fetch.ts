@@ -100,7 +100,8 @@ export function fetchEventSource(input: RequestInfo, {
         const fetch = inputFetch ?? window.fetch;
         const onopen = inputOnOpen ?? defaultOnOpen;
         async function create() {
-            curRequestController = new AbortController();
+            const currentController = new AbortController();
+            curRequestController = currentController;
             try {
                 const response = await fetch(input, {
                     ...rest,
@@ -126,7 +127,7 @@ export function fetchEventSource(input: RequestInfo, {
                 dispose();
                 resolve();
             } catch (err) {
-                if (!curRequestController.signal.aborted) {
+                if (!currentController.signal.aborted) {
                     // if we haven't aborted the request ourselves:
                     try {
                         // check if we need to retry:
